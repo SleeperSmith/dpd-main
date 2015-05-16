@@ -170,6 +170,17 @@ describe('collection', function(){
       );
     });
     
+    it('should handle GET and not crash on invalid query', function (done) {
+      var testData = [];
+      example('GET', '/foo1', { test: { type: 'boolean' } }, null, { "$fields": "test" },
+        function (req, res, method, path, properties, body) {
+        expect(res.statusCode).to.equal(200);
+      },
+        done,
+        testData
+      );
+    });
+    
     it('should handle PUT', function(done) {
       var testData = [{test: true}, {test: false}];
       example('PUT', '/foo', {test: {type: 'boolean'}}, {test: false, id: 7}, null,
@@ -226,6 +237,62 @@ describe('collection', function(){
       });
     });
 
+    it('should pass $addUnique command', function(done) {
+      var c = new Collection('persons', {db: db.create(TEST_DB), config: { properties: {names: {type: 'array'}}}});
+
+      c.save({body: {names: ['jim','sam']}}, function (err, item) {
+        expect(item.id).to.exist;
+        expect(err).to.not.exist;
+        c.save({body: {names: {$addUnique: 'joe'}}, query: {id: item.id}}, function (err, updated) {
+          expect(err).to.not.exist;
+          expect(updated).to.exist;
+          expect(updated.names).to.eql(['jim', 'sam', 'joe']);
+          done(err);
+        });
+      });
+    });
+
+    it('should not add duplicate element on $addUnique', function(done) {
+      var c = new Collection('persons', {db: db.create(TEST_DB), config: { properties: {names: {type: 'array'}}}});
+
+      c.save({body: {names: ['jim','sam', 'joe']}}, function (err, item) {
+        expect(item.id).to.exist;
+        expect(err).to.not.exist;
+        c.save({body: {names: {$addUnique: 'joe'}}, query: {id: item.id}}, function (err, updated) {
+          expect(err).to.not.exist;
+          expect(updated).to.exist;
+          expect(updated.names).to.eql(['jim', 'sam', 'joe']);
+          done(err);
+        });
+      });
+    });
+    
+    it('should not fail validation on $push with required array', function (done) {
+      var c = new Collection('persons', { db: db.create(TEST_DB), config: { properties: { names: { type: 'array', required: true } } } });
+      
+      c.save({ body: { names: { $pushAll: ['jim','sam', 'joe'] } } }, function (err, item) {
+        expect(item.id).to.exist;
+        expect(err).to.not.exist;
+        expect(item.names).to.eql(['jim', 'sam', 'joe']);
+        done(err);
+      });
+    });
+
+    it('should not add duplicate elements and add unique elements on $addUnique', function(done) {
+      var c = new Collection('persons', {db: db.create(TEST_DB), config: { properties: {names: {type: 'array'}}}});
+
+      c.save({body: {names: ['jim','sam', 'joe']}}, function (err, item) {
+        expect(item.id).to.exist;
+        expect(err).to.not.exist;
+        c.save({body: {names: {$addUnique: ['carmen', 'jim', 'keith', 'paulus', 'sam', 'joe']}}, query: {id: item.id}}, function (err, updated) {
+          expect(err).to.not.exist;
+          expect(updated).to.exist;
+          expect(updated.names).to.eql(['jim', 'sam', 'joe', 'carmen', 'keith', 'paulus']);
+          done(err);
+        });
+      });
+    });
+
     // it('should pass commands to the validation listener', function(done) {
     //   var c = new Collection({
     //     onValidate: 'if(typeof this.count != "object") throw "didnt pass command to listener"',
@@ -236,6 +303,19 @@ describe('collection', function(){
 
     //   c.save({}, {count: {$inc: 100}}, {id: 'foo'}, {}, done);
     // });
+  });
+  
+  describe('.remove()', function() {
+    it('should not crash on non existent id', function(done) {
+      var c = new Collection('foo_del', {db: db.create(TEST_DB), config: { properties: {count: {type: 'number'}}}});
+
+      c.remove({query: {id: "abc"}}, function (err, item) {
+        c.find({}, function (err, items) {
+          expect(items.length).to.equal(0);
+          done(err);
+        });
+      });
+    });
   });
 
   describe('.get()', function() {
@@ -305,6 +385,22 @@ describe('collection', function(){
 
       c.execCommands('update', item, {names: {$pushAll: ['jim', 'sam']}});
       expect(item.names).to.eql(['joe', 'bob', 'jim', 'sam']);
+    });
+
+    it('$addUnique - should add an object to a set', function () {
+      var c = new Collection()
+        , item = {names: ['joe', 'bob']};
+
+      c.execCommands('update', item, {names: {$addUnique: 'sam'}});
+      expect(item.names).to.eql(['joe', 'bob', 'sam']);
+    });
+
+    it('$addUnique - should add only an object that is unique to the set', function () {
+      var c = new Collection()
+        , item = {names: ['joe', 'bob']};
+
+      c.execCommands('update', item, {names: {$addUnique: 'joe'}});
+      expect(item.names).to.eql(['joe', 'bob']);
     });
 
     it('should not throw', function() {

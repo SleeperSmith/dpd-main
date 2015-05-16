@@ -1,5 +1,87 @@
 # History
 
+## 0.8.2 (2015-04-23)
+
+### Bug Fixes
+
+- **collection:** should not crash on deleting non existent id
+  ([1b85c2127c](https://github.com/deployd/deployd/commit/1b85c2127c0badda706e34e10522e20dbd7bd879))
+  
+## 0.8.1 (2015-04-22)
+
+### Bug Fixes
+
+- **UserCollection:** res.cookies not available from internal client
+  ([5717c4d1](https://github.com/deployd/deployd/commit/5717c4d124060bcb41a794ceeec1a84ed4ca1597))
+- **cli:**
+  - dpd keygen fails when .dpd folder doesn't exist
+  ([b5a6fd5b](https://github.com/deployd/deployd/commit/b5a6fd5b5eebdbc755153cc58234459aeabef908))
+  - bug515 correct wrong error message when deployd crashes
+  ([59af175c](https://github.com/deployd/deployd/commit/59af175c5c40e210828a2aa6ea71cad459d0f8c2))
+- **dashboard:** use ejs delimiter instead of open and close tag
+  ([776e17cf](https://github.com/deployd/deployd/commit/776e17cfa8b1263373ddf9ef6c1336d8af37315c))
+- **delete:** call Delete event for every record matched
+  ([462c6766](https://github.com/deployd/deployd/commit/462c6766351a1bbac86d730d58f272ca98869527))
+- **dpd.js:** dpd.socket null
+  ([5331ac39](https://github.com/deployd/deployd/commit/5331ac397400e0c6c11a6caee3ea1d1d3cefa58b))
+- **script:** memory leak and performance improvement
+  ([578bd28d](https://github.com/deployd/deployd/commit/578bd28d0feee81caa1bcb7045c259b8e0d44797))
+- **server:** allow request.rawBody for middlewares
+  ([59fbdbab](https://github.com/deployd/deployd/commit/59fbdbab1760bafe043a4f4e4dfef851ac02c7c8),
+   [#519](https://github.com/deployd/deployd/issues/519))
+- **user-collection:** crash when password is not specified in login
+  ([65f4170b](https://github.com/deployd/deployd/commit/65f4170b7881ebb01ba50c4ee47fae22f3fe001e))
+
+## 0.8.0
+
+### Bug Fixes
+- **typeload:** load custom resources from package.json if exists
+  ([f1f0738](https://github.com/deployd/deployd/commit/f1f0738942941b16075fde42ef62dfde6f77bc51))
+- **attach.js:** mkdir resourcesPath if not exists
+  ([55cf4b36](https://github.com/deployd/deployd/commit/55cf4b366ce951512dac0f06b8fbbcc297c6486a))
+- **collection:**
+  - $push should work with arrays when inserting new records
+  ([077c2b97](https://github.com/deployd/deployd/commit/077c2b97cffee6c14f4f10391c3f78b7055aae8d))
+  - allow changed() function to work properly with collection properties of type object.
+  ([46f518dc](https://github.com/deployd/deployd/commit/46f518dc876e723c6c87c70a87b6ef7278b6dab4))
+- **config-loader:** improve the 'resources' dir reading
+  ([67218018](https://github.com/deployd/deployd/commit/672180182306eb305df09e7242af691cdc62235c))
+- **db:**
+  - update/delete should return count of records affected
+  ([6a8caad8](https://github.com/deployd/deployd/commit/6a8caad83e571bf82fdaab3c7bff58cab6d25d42))
+  - Should not crash process when an invalid $fields query is passed.
+  ([ca68e153](https://github.com/deployd/deployd/commit/ca68e1531e5f692e29b9f67f35540faeb7b60a45))
+- **internal-client:** exec resource.path is missing
+  ([c1acee8e](https://github.com/deployd/deployd/commit/c1acee8e6ff8de4b5ad1da3bf2dd1f726db0e68c))
+- **script:** null values in domain were changed to {}
+  ([26311eea](https://github.com/deployd/deployd/commit/26311eea7b0d47bec66f113fca1b1f13bd89ae86))
+- **session:** correct usages of an emit queue.
+  ([53b226ad](https://github.com/deployd/deployd/commit/53b226ad09b56006ff15edb783a6b5bf5b3f6301))
+- **session.js:** Refactor session creation code to use promises in order to fix a possible race condition while inserting a session to the database.
+  ([3080de2f](https://github.com/deployd/deployd/commit/3080de2faaeee6dc2d22e6e8f201b60cbf26bff2))
+- **tests:** call done() properly from async function
+  ([061f16de](https://github.com/deployd/deployd/commit/061f16de29e1ad81e35b817ce72ff604e61d3a77))
+- correctly delete cookies, update cookies-dependency
+
+
+### Features
+
+- **collection:** $addUnique for MongoDB $addToSet support (from yoneal PR #252)
+  ([730e980e](https://github.com/deployd/deployd/commit/730e980ec4c1ccaa9b9fc894fba6ee98c2bbcc27))
+- **config-loader server:** customize server and public dirs through options
+  ([f17d296d](https://github.com/deployd/deployd/commit/f17d296dd879c99222756610fe5604490289d5df))
+- **core:** wait for promises in events
+  ([964ec452](https://github.com/deployd/deployd/commit/964ec452619e7da7a7f5ce0f87fb6d334dbc21cd))
+- **dashboard:** sort sidebar resources in alphabetical order
+  ([4cf89a63](https://github.com/deployd/deployd/commit/4cf89a63436179fe26d5af5d9b6e204b43cda606))
+- **events:** Expose ctx object to the event scripts
+  ([c0b39d3a](https://github.com/deployd/deployd/commit/c0b39d3ae6247a4631647bdf865534931981bf1f))
+- **server:** add deployd.attach to extend http/expressjs/connect server and provide a middleware
+  ([29cf94b4](https://github.com/deployd/deployd/commit/29cf94b48bd01ec805ab156f7a33ac426ca598a0))
+- **session:** get session by uid
+  ([ffb33bf5](https://github.com/deployd/deployd/commit/ffb33bf58ba60378de6e30104a4fd54351285175))
+- **dpd.js** add promises to client library
+
 ## 0.7.0
 
  - Add ability to query by subproperty within GET event
